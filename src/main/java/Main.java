@@ -45,19 +45,21 @@ public class Main {
         }
   }
 
-  public static void handleClient(Socket clientSocket) throws Exception{
-      InputStream inputStream = clientSocket.getInputStream();
-      OutputStream outputStream = clientSocket.getOutputStream();
+  public static void handleClient(Socket clientSocket) {
+      try (clientSocket) {
+          InputStream inputStream = clientSocket.getInputStream();
+          OutputStream outputStream = clientSocket.getOutputStream();
 
-      Scanner sc = new Scanner(inputStream);
-      //Infinte loop to read multiple PING commands from client
-      while(sc.hasNextLine()) {
-          String str = sc.nextLine();
-          if(str.contains("PING")) {
-              //Gives output as PONG to command from client
-              outputStream.write("+PONG\r\n".getBytes());
-              outputStream.flush();
+          Scanner sc = new Scanner(inputStream);
+          while (sc.hasNextLine()) {
+              String str = sc.nextLine();
+              if (str.equalsIgnoreCase("ping")) {
+                  outputStream.write("+PONG\r\n".getBytes());
+                  outputStream.flush();
+              }
           }
+      } catch (IOException e) {
+          System.out.println("Client error: " + e.getMessage());
       }
   }
 }
