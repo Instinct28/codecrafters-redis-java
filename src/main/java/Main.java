@@ -3,6 +3,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -37,12 +38,6 @@ public class Main {
               }, executor);
           }
 
-
-
-
-          //clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
-
-
         } catch (IOException e) {
           System.out.println("IOException: " + e.getMessage());
         }
@@ -58,6 +53,14 @@ public class Main {
               String str = sc.nextLine();
               if (str.equalsIgnoreCase("ping")) {
                   outputStream.write("+PONG\r\n".getBytes());
+                  outputStream.flush();
+              }
+              if(str.equalsIgnoreCase("echo")){
+                  String responseHeader = sc.nextLine();
+                  String responseBody = sc.nextLine();
+                  String response = responseHeader + "\r\n" + responseBody + "\r\n";
+
+                  outputStream.write(response.getBytes());
                   outputStream.flush();
               }
           }
