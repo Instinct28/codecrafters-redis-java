@@ -27,7 +27,7 @@ public class Main {
 
           Scanner sc = new Scanner(inputStream);
           //Infinte loop to read multiple PING commands from client
-          while (sc.hasNextLine()) {
+          while(sc.hasNextLine()) {
               String str = sc.nextLine();
               if(str.equalsIgnoreCase("ping")) {
                   //Gives output as PONG to command from client
