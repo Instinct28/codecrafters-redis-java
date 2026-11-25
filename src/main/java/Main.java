@@ -56,6 +56,7 @@ public class Main {
           if(str.contains("PING")) {
               //Gives output as PONG to command from client
               outputStream.write("+PONG\r\n".getBytes());
+              outputStream.flush();
           }
       }
   }
