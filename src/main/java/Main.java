@@ -61,7 +61,7 @@ public class Main {
       //Infinte loop to read multiple PING commands from client
       while(sc.hasNextLine()) {
           String str = sc.nextLine();
-          if(str.contains("ping")) {
+          if(str.contains("PING")) {
               //Gives output as PONG to command from client
               outputStream.write("+PONG\r\n".getBytes());
           }
