@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 public class Main {
   public static void main(String[] args){
@@ -20,6 +21,7 @@ public class Main {
           // Since the tester restarts your program quite often, setting SO_REUSEADDR
           // ensures that we don't run into 'Address already in use' errors
           serverSocket.setReuseAddress(true);
+          ExecutorService executor = Executors.newCachedThreadPool();
           // Wait for connection from client.
 
           while(true){
@@ -31,7 +33,7 @@ public class Main {
                   } catch (Exception e) {
                       throw new RuntimeException(e);
                   }
-              });
+              }, executor);
           }
 
 
