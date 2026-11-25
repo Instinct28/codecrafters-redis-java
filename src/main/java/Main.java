@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
 
 public class Main {
   public static void main(String[] args){
@@ -20,20 +21,21 @@ public class Main {
           // ensures that we don't run into 'Address already in use' errors
           serverSocket.setReuseAddress(true);
           // Wait for connection from client.
-          clientSocket = serverSocket.accept();
 
-          InputStream inputStream = clientSocket.getInputStream();
-          OutputStream outputStream = clientSocket.getOutputStream();
-
-          Scanner sc = new Scanner(inputStream);
-          //Infinte loop to read multiple PING commands from client
-          while(sc.hasNextLine()) {
-              String str = sc.nextLine();
-              if(str.equalsIgnoreCase("ping")) {
-                  //Gives output as PONG to command from client
-                  outputStream.write("+PONG\r\n".getBytes());
-              }
+          while(true){
+              clientSocket = serverSocket.accept();
+              Socket finalClientSocket = clientSocket;
+              CompletableFuture.runAsync(() -> {
+                  try {
+                      handleClient(finalClientSocket);
+                  } catch (Exception e) {
+                      throw new RuntimeException(e);
+                  }
+              })
           }
+
+
+
 
           //clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
 
@@ -49,5 +51,20 @@ public class Main {
             System.out.println("IOException: " + e.getMessage());
           }
         }
+  }
+
+  public static void handleClient(Socket clientSocket) throws Exception{
+      InputStream inputStream = clientSocket.getInputStream();
+      OutputStream outputStream = clientSocket.getOutputStream();
+
+      Scanner sc = new Scanner(inputStream);
+      //Infinte loop to read multiple PING commands from client
+      while(sc.hasNextLine()) {
+          String str = sc.nextLine();
+          if(str.equalsIgnoreCase("ping")) {
+              //Gives output as PONG to command from client
+              outputStream.write("+PONG\r\n".getBytes());
+          }
+      }
   }
 }
