@@ -1,7 +1,9 @@
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Main {
   public static void main(String[] args){
@@ -21,10 +23,16 @@ public class Main {
           clientSocket = serverSocket.accept();
 
           InputStream inputStream = clientSocket.getInputStream();
-          byte[] buffer = new byte[1024];
-          int bytesRead;
-          while ((bytesRead = inputStream.read(buffer)) != -1) {
-              clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
+          OutputStream outputStream = clientSocket.getOutputStream();
+
+          Scanner sc = new Scanner(inputStream);
+          //Infinte loop to read multiple PING commands from client
+          while (sc.hasNextLine()) {
+              String str = sc.nextLine();
+              if(str.equalsIgnoreCase("ping")) {
+                  //Gives output as PONG to command from client
+                  outputStream.write("+PONG\r\n".getBytes());
+              }
           }
 
           //clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
